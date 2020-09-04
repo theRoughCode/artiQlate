@@ -46,7 +46,8 @@ def get_gate_type(entities: dict) -> str:
     entity_val = get_entity_value(entities, ENTITIES.GATE_TYPE)
     if entity_val is None or len(entity_val) == 0:
         return None
-    return entity_val.split()[0].capitalize()
+    gate_type = entity_val.split()[0]
+    return gate_type[0].upper() + gate_type[1:]
 
 
 def handle_intent(intent: str, entities: dict):
