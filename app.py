@@ -1,13 +1,16 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS, cross_origin
 from artiqlate.circuit import Circuit
 from artiqlate.cirq_agent import generate_circuit
 from artiqlate.wit_agent import handle_message
 import json
 
 app = Flask(__name__)
+cors = CORS(app)
 
 
 @app.route('/message', methods=['POST'])
+@cross_origin()
 def receive_message():
     message = request.form['message']
     if "circuit" in request.form:
