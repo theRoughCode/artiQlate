@@ -1,10 +1,12 @@
 from wit import Wit
 from dotenv import load_dotenv
 from pathlib import Path
-from circuit import Circuit
+from typing import List
+from artiqlate.circuit import Circuit
+from artiqlate.operation import Operation
 import os
-import entities as ENTITIES
-import intents as INTENTS
+import artiqlate.entities as ENTITIES
+import artiqlate.intents as INTENTS
 
 env_path = Path('.') / '.env'
 load_dotenv(env_path)
@@ -31,33 +33,75 @@ def get_num_qubits(entities: dict) -> int:
     return int(num_qubits)
 
 
+def get_qubit_ids(entities: dict) -> List[int]:
+    entity_val = get_entity_value(entities, ENTITIES.QUBIT_ID)
+    if entity_val is None:
+        return []
+    entity_val = entity_val.replace(',', '')
+    qubit_ids = [int(s) for s in entity_val.split() if s.isdigit()]
+    return qubit_ids
+
+
+def get_gate_type(entities: dict) -> str:
+    entity_val = get_entity_value(entities, ENTITIES.GATE_TYPE)
+    if entity_val is None or len(entity_val) == 0:
+        return None
+    return entity_val.split()[0]
+
+
 def handle_intent(intent: str, entities: dict):
+    global circuit
     if intent == INTENTS.ADD_QUBITS:
-        pass
+        # Add qubits to circuit
+        num_qubits = get_num_qubits(entities)
+        if circuit is None:
+            circuit = Circuit(num_qubits)
+        else:
+            circuit.add_qubits(num_qubits)
     elif intent == INTENTS.APPLY_GATE:
-        pass
+        # Apply gate to circuit
+        if circuit is None:
+            print("No circuit created.")
+            return
+        # Get target qubit IDs
+        qubit_ids = get_qubit_ids(entities)
+        if len(qubit_ids) == 0:
+            print("No target qubits found.")
+            return
+        max_id = max(qubit_ids)
+        if circuit.num_qubits <= max_id:
+            print("Invalid qubit id {} found. Max qubit id: {}.".format(
+                max_id, circuit.num_qubits - 1))
+            return
+        # Get gate type
+        gate_type = get_gate_type(entities)
+        if gate_type is None:
+            print("No gate type found.")
+            return
+        op = Operation(gate_type, qubit_ids)
+        circuit.add_operation(op)
+        print("Applied {} on qubit(s) {}".format(
+            gate_type, ",".join(map(str, qubit_ids))))
     elif intent == INTENTS.CREATE_CIRCUIT:
+        # Create new circuit
         print("Creating new circuit...")
         circuit = Circuit()
         num_qubits = get_num_qubits(entities)
         circuit.add_qubits(num_qubits)
-        print(num_qubits)
     elif intent == INTENTS.DELETE_QUBITS:
+        # Remove qubits from circuit
         pass
     else:
         print("Invalid intent: {}".format(intent))
 
 
-def handle_message(message: str) -> str:
+def handle_message(message: str) -> Circuit:
     resp = client.message(message)
     print(resp)
     if len(resp['intents']) == 0:
-        return "Invalid message."
+        print("Invalid message.")
+        return circuit
     intent = resp['intents'][0]['name']
     entities = resp['entities']
     handle_intent(intent, entities)
-    return str(circuit)
-
-
-handle_message('create new circuit with 3 qubits')
-print(str(circuit))
+    return circuit

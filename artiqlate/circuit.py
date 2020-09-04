@@ -4,10 +4,10 @@ import json
 
 
 class Circuit(object):
-    def __init__(self, num_qubits=0, operations=[]):
+    def __init__(self, num_qubits=0, operations=None):
         super().__init__()
         self.num_qubits = num_qubits
-        self.operations = operations
+        self.operations = operations if operations is not None else []
 
     @staticmethod
     def from_json(json_obj: Union[str, dict]):
