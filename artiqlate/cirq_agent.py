@@ -35,6 +35,9 @@ def apply_operation(qc: QuantumCircuit, op: Operation):
 
 
 def generate_circuit(circuit: Circuit) -> QuantumCircuit:
+    if circuit.num_qubits == 0:
+        print("No qubits found. Please add more qubits!")
+        return None
     qc = QuantumCircuit(circuit.num_qubits)
     for op in circuit.operations:
         apply_operation(qc, op)

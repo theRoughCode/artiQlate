@@ -13,7 +13,6 @@ load_dotenv(env_path)
 WIT_API_KEY = os.getenv("WIT_API_KEY")
 
 client = Wit(WIT_API_KEY)
-circuit = Circuit()
 
 
 def get_entity_value(entities, entity):
@@ -50,8 +49,7 @@ def get_gate_type(entities: dict) -> str:
     return gate_type[0].upper() + gate_type[1:]
 
 
-def handle_intent(intent: str, entities: dict):
-    global circuit
+def handle_intent(intent: str, entities: dict, circuit: Circuit) -> Circuit:
     if intent == INTENTS.ADD_QUBITS:
         # Add qubits to circuit
         num_qubits = get_num_qubits(entities)
@@ -63,22 +61,22 @@ def handle_intent(intent: str, entities: dict):
         # Apply gate to circuit
         if circuit is None:
             print("No circuit created.")
-            return
+            return circuit
         # Get target qubit IDs
         qubit_ids = get_qubit_ids(entities)
         if len(qubit_ids) == 0:
             print("No target qubits found.")
-            return
+            return circuit
         max_id = max(qubit_ids)
         if circuit.num_qubits <= max_id:
             print("Invalid qubit id {} found. Max qubit id: {}.".format(
                 max_id, circuit.num_qubits - 1))
-            return
+            return circuit
         # Get gate type
         gate_type = get_gate_type(entities)
         if gate_type is None:
             print("No gate type found.")
-            return
+            return circuit
         op = Operation(gate_type, qubit_ids)
         circuit.add_operation(op)
         print("Applied {} on qubit(s) {}".format(
@@ -95,13 +93,14 @@ def handle_intent(intent: str, entities: dict):
     else:
         print("Invalid intent: {}".format(intent))
 
+    return circuit
 
-def handle_message(message: str) -> Circuit:
+
+def handle_message(message: str, circuit: Circuit = None) -> Circuit:
     resp = client.message(message)
     if len(resp['intents']) == 0:
         print("Invalid message.")
         return circuit
     intent = resp['intents'][0]['name']
     entities = resp['entities']
-    handle_intent(intent, entities)
-    return circuit
+    return handle_intent(intent, entities, circuit)
