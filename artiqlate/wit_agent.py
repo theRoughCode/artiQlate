@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import List, Union
 from artiqlate.circuit import Circuit
 from artiqlate.operation import Operation
+from artiqlate.utils import text2int
 import os
 import artiqlate.entities as ENTITIES
 import artiqlate.intents as INTENTS
@@ -29,7 +30,7 @@ def get_num_qubits(entities: dict) -> int:
     if entity_val is None:
         return 0
     num_qubits = entity_val.split()[0]
-    return int(num_qubits)
+    return int(num_qubits) if num_qubits.isdigit() else text2int(num_qubits)
 
 
 def get_qubit_ids(entities: dict) -> List[int]:
@@ -37,7 +38,7 @@ def get_qubit_ids(entities: dict) -> List[int]:
     if entity_val is None:
         return []
     entity_val = entity_val.replace(',', '')
-    qubit_ids = [int(s) for s in entity_val.split() if s.isdigit()]
+    qubit_ids = [s for s in map(text2int, entity_val.split()) if isinstance(s, int)]
     return qubit_ids
 
 

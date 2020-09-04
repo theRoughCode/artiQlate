@@ -47,8 +47,12 @@ def test_apply_gates():
     assert handle_message('apply X gate on qubit 3', circ) == expected
 
     # Test multiple qubits
-    expected.add_operation(Operation('CNOT', [1, 2]))
-    circ = handle_message('apply CNOT on qubits 1 and 2', circ)
+    # Add qubit
+    expected.add_qubits(2)
+    circ = handle_message('add 2 qubits', circ)
+    assert circ == expected
+    expected.add_operation(Operation('CNOT', [1, 4]))
+    circ = handle_message('apply CNOT on qubits 1 and 4', circ)
     assert circ == expected
     # Add qubit
     expected.add_qubits(1)
