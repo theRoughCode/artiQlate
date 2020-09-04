@@ -1,7 +1,7 @@
 from wit import Wit
 from dotenv import load_dotenv
 from pathlib import Path
-from typing import List
+from typing import List, Union
 from artiqlate.circuit import Circuit
 from artiqlate.operation import Operation
 import os
@@ -96,7 +96,7 @@ def handle_intent(intent: str, entities: dict, circuit: Circuit) -> Circuit:
     return circuit
 
 
-def handle_message(message: str, circuit: Circuit = None) -> Circuit:
+def handle_message(message: str, circuit: Circuit = None) -> Union[Circuit, None]:
     resp = client.message(message)
     if len(resp['intents']) == 0:
         print("Invalid message.")
