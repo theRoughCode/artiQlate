@@ -46,7 +46,7 @@ def get_gate_type(entities: dict) -> str:
     entity_val = get_entity_value(entities, ENTITIES.GATE_TYPE)
     if entity_val is None or len(entity_val) == 0:
         return None
-    return entity_val.split()[0]
+    return entity_val.split()[0].capitalize()
 
 
 def handle_intent(intent: str, entities: dict):
@@ -97,7 +97,6 @@ def handle_intent(intent: str, entities: dict):
 
 def handle_message(message: str) -> Circuit:
     resp = client.message(message)
-    print(resp)
     if len(resp['intents']) == 0:
         print("Invalid message.")
         return circuit
