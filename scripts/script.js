@@ -22,12 +22,26 @@ function drawCircuit(message) {
   })
   .then(data => data.json())
   .then(res => {
-    container.classList.add('active');
     circuit = res.circuit;
-    if (res.img == null) return;
+    if (res.img == null) {
+      imgContainer.removeAttribute('src');
+      container.classList.remove('active');
+      return;
+    }
+    container.classList.add('active');
     setTimeout(() => imgContainer.src = `data:image/jpg;base64, ${res.img}`, 100);
   })
   .catch(err => console.log(err));
+}
+
+function onStartSpeech() {
+  startBtn.innerText = 'Listening...';
+  startBtn.disabled = true;
+}
+
+function onStopSpeech() {
+  startBtn.innerText = 'Start Command';
+  startBtn.disabled = false;
 }
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -58,7 +72,6 @@ recognition.grammars = speechRecognitionList;
 recognition.continuous = false;
 recognition.lang = 'en-CA';
 recognition.interimResults = false;
-recognition.onstart = () => console.log('started');
 recognition.onresult = function(event) {
   const transcript = event.results[0][0].transcript;
   speechOutput.textContent = `Command received: ${transcript}.`;
@@ -67,17 +80,20 @@ recognition.onresult = function(event) {
 };
 recognition.onspeechend = function() {
   recognition.stop();
+  onStopSpeech();
 };
 recognition.onnomatch = function(event) {
   console.log('Failed to recognize command.');
+  onStopSpeech();
 };
 recognition.onerror = function(event) {
   console.log('Error occurred in recognition: ' + event.error);
+  onStopSpeech();
 };
 
 startBtn.onclick = function() {
+  onStartSpeech();
   recognition.start();
-  console.log('Ready to receive a command.');
 };
 
 
