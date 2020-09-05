@@ -1,5 +1,4 @@
-from qiskit import QuantumCircuit
-from qiskit.extensions import UnitaryGate
+from qiskit import QuantumCircuit, ClassicalRegister
 from artiqlate.circuit import Circuit
 from artiqlate.operation import Operation
 import numpy as np
@@ -29,6 +28,10 @@ def apply_operation(qc: QuantumCircuit, op: Operation):
             raise Exception(
                 "CNOT requires 3 target qubits. Found: {}".format(len(targets)))
         qc.ccx(*targets)
+    elif label == 'measure':
+        cr = ClassicalRegister(len(targets))
+        qc.add_register(cr)
+        qc.measure(targets, cr)
     else:
         u = np.eye(pow(2, len(targets)))
         qc.unitary(u, targets, label=op.label)
