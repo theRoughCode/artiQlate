@@ -2,9 +2,10 @@ const BASE_URL = 'https://artiqlate.herokuapp.com';
 
 let circuit = null;
 
-const container = document.querySelector('#circuit-container');
-const imgContainer = document.querySelector('#circuit-image');
-const speechOutput = document.querySelector('#output');
+const container = document.getElementById('circuit-container');
+const imgContainer = document.getElementById('circuit-image');
+const speechOutput = document.getElementById('output');
+const startBtn = document.getElementById('start-btn');
 
 function drawCircuit(message) {
   const data = { message };
@@ -21,13 +22,13 @@ function drawCircuit(message) {
   })
   .then(data => data.json())
   .then(res => {
+    container.classList.add('active');
     circuit = res.circuit;
-    imgContainer.src = `data:image/jpg;base64, ${res.img}`;
+    if (res.img == null) return;
+    setTimeout(() => imgContainer.src = `data:image/jpg;base64, ${res.img}`, 100);
   })
   .catch(err => console.log(err));
 }
-
-// getCircuit('create new circuit with 5 qubits')
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList;
@@ -51,7 +52,6 @@ public <qubitid> = <qubit> <number> ;
 public <qubitcount> = <number> <qubit> ;
 public <statement> = create a circuit | create a circuit with <qubitcount> | add <number> <keyword> | apply <gate statement> to <qubitid> ;
 `;
-console.log(grammar)
 speechRecognitionList.addFromString(grammar, 1);
 
 recognition.grammars = speechRecognitionList;
@@ -61,7 +61,7 @@ recognition.interimResults = false;
 recognition.onstart = () => console.log('started');
 recognition.onresult = function(event) {
   const transcript = event.results[0][0].transcript;
-  speechOutput.textContent = 'Result received: ' + transcript + '.';
+  speechOutput.textContent = `Command received: ${transcript}.`;
   drawCircuit(transcript);
   console.log('Confidence: ' + event.results[0][0].confidence);
 };
@@ -75,7 +75,7 @@ recognition.onerror = function(event) {
   console.log('Error occurred in recognition: ' + event.error);
 };
 
-document.body.onclick = function() {
+startBtn.onclick = function() {
   recognition.start();
   console.log('Ready to receive a command.');
 };

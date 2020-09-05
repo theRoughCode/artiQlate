@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ArtiQlate</title>
+    <title>ArtiQlate - Generate a quantum circuit with your voice!</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <style>
         html, body {
             margin: 0;
@@ -16,23 +17,66 @@
             display: flex;
             flex-direction: column;
         }
+        .w3-container {
+            margin: 20px auto;
+            transition: height 300ms;
+        }
+        #circuit-container {
+            height: 10px;
+            transition: height 300ms;
+        }
+        #circuit-container.active {
+            height: 400px;
+        }
         #circuit-image {
             margin: 20px auto;
             object-fit: contain;
+            height: 100%;
         }
         #command-container {
             margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+        }
+        #output {
+            font-style: oblique;
+        }
+        #footer {
+            width:100%;
+            bottom:0px;
+            left:0px;
+            position:fixed;
         }
     </style>
 </head>
-<body>
+<body class="w3-content" style="max-width:1300px">
     <div class="container">
-        <h1>ArtiQlate: Generate a quantum circuit with your voice!</h1>
-        <img id="circuit-image" />
+        <h1>ArtiQlate: Create quantum circuits with your voice!</h1>
+        <div id="circuit-container" class="w3-container w3-center">
+            <img id="circuit-image" />
+        </div>
+        <div class="w3-container" style="width: 800px; max-width: 100%; text-align: justify;">
+            <p>
+                Start creating a circuit by clicking on the "Start Command" button below and saying "Create a circuit with 3 qubits".
+                You should see a circuit with 3 qubits generated on-screen.
+            </p>
+            <p>
+                You can then apply gates such as the X gate by hitting
+                the "Start Command" button again and saying "Apply X gate to qubit 1". To measure a qubit, simply say "Measure qubit 2".
+            </p>
+            <p>
+                Have fun learning about quantum algorithms!
+            </p>
+        </div>
         <div id="command-container">
-            <button id="start-record">Start</button>
+            <div style="margin: auto;">
+                <button id="start-btn" class="w3-btn w3-indigo w3-ripple">Start Command</button>
+            </div>
             <p id="output"></p>
         </div>
+    </div>
+    <div id="footer" class="w3-container w3-black w3-padding-16">
+        <p>A <a href="https://github.com/theRoughCode/artiQlate">project</a> by Raphael Koh. 🚀</p>
     </div>
     <script src="scripts/script.js"></script>
 </body>
