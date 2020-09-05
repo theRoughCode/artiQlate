@@ -11,13 +11,17 @@ def apply_operation(qc: QuantumCircuit, op: Operation):
         raise Exception(
             "No target qubits found for operation: {}".format(str(op)))
     if label == "h":
-        qc.h(targets[0])
+        for t in targets:
+            qc.h(t)
     elif label == "x":
-        qc.x(targets[0])
+        for t in targets:
+            qc.x(t)
     elif label == "y":
-        qc.y(targets[0])
+        for t in targets:
+            qc.y(t)
     elif label == "z":
-        qc.z(targets[0])
+        for t in targets:
+            qc.z(t)
     elif label == "cnot":
         if len(targets) != 2:
             raise Exception(
