@@ -3,6 +3,7 @@ const BASE_URL = 'https://artiqlate.herokuapp.com';
 let circuit = null;
 
 const container = document.querySelector('#circuit-container');
+const imgContainer = document.querySelector('#circuit-image');
 const speechOutput = document.querySelector('#output');
 
 function drawCircuit(message) {
@@ -21,7 +22,7 @@ function drawCircuit(message) {
   .then(data => data.json())
   .then(res => {
     circuit = res.circuit;
-    container.innerHTML = res.img;
+    imgContainer.src = `data:image/jpg;base64, ${res.img}`;
   })
   .catch(err => console.log(err));
 }

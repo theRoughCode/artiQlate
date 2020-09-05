@@ -16,12 +16,9 @@
             display: flex;
             flex-direction: column;
         }
-        #circuit-container {
+        #circuit-image {
             margin: 20px auto;
-            padding: 20px;
-            min-width: 50px;
-            min-height: 20px;
-            width: fit-content;
+            object-fit: contain;
         }
         #command-container {
             margin: 20px auto;
@@ -31,7 +28,7 @@
 <body>
     <div class="container">
         <h1>ArtiQlate: Generate a quantum circuit with your voice!</h1>
-        <pre id="circuit-container"></pre>
+        <img id="circuit-image" />
         <div id="command-container">
             <button id="start-record">Start</button>
             <p id="output"></p>

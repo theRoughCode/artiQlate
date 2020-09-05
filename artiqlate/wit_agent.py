@@ -33,11 +33,13 @@ def get_num_qubits(entities: dict) -> int:
     return int(num_qubits) if num_qubits.isdigit() else text2int(num_qubits)
 
 
-def get_qubit_ids(entities: dict) -> List[int]:
+def get_qubit_ids(entities: dict, max_qubits: int) -> List[int]:
     entity_val = get_entity_value(entities, ENTITIES.QUBIT_ID)
     if entity_val is None:
         return []
     entity_val = entity_val.replace(',', '')
+    if "all" in entity_val:
+        return list(range(0, max_qubits))
     qubit_ids = [s for s in map(text2int, entity_val.split()) if isinstance(s, int)]
     return qubit_ids
 
@@ -64,7 +66,7 @@ def handle_intent(intent: str, entities: dict, circuit: Circuit) -> Circuit:
             print("No circuit created.")
             return circuit
         # Get target qubit IDs
-        qubit_ids = get_qubit_ids(entities)
+        qubit_ids = get_qubit_ids(entities, circuit.num_qubits)
         if len(qubit_ids) == 0:
             print("No target qubits found.")
             return circuit

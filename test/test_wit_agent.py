@@ -44,6 +44,9 @@ def test_apply_gates():
     expected.add_operation(Operation('Measure', [0]))
     circ = handle_message('measure qubit 0', circ)
     assert circ == expected
+    expected.add_operation(Operation('Measure', [0, 1, 2]))
+    circ = handle_message('measure all qubits', circ)
+    assert circ == expected
 
     # Test no qubits
     assert handle_message('apply X gate', circ) == expected
